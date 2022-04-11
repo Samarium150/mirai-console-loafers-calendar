@@ -21,6 +21,7 @@ import io.github.samarium150.mirai.plugin.loafers_calendar.command.Subscribe
 import io.github.samarium150.mirai.plugin.loafers_calendar.command.Unsubscribe
 import io.github.samarium150.mirai.plugin.loafers_calendar.config.CommandConfig
 import io.github.samarium150.mirai.plugin.loafers_calendar.config.PluginConfig
+import io.github.samarium150.mirai.plugin.loafers_calendar.data.PluginData
 import io.github.samarium150.mirai.plugin.loafers_calendar.util.Subscription
 import io.github.samarium150.mirai.plugin.loafers_calendar.util.sendUpdate
 import io.ktor.client.*
@@ -39,7 +40,7 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-loafers-calender",
         name = "Loafers' Calender",
-        version = "1.1.0",
+        version = "1.1.1",
     ) {
         author("Samarium")
     }
@@ -55,6 +56,8 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
 
         PluginConfig.reload()
         CommandConfig.reload()
+
+        PluginData.reload()
 
         GetLoafersCalendar.register()
         Subscribe.register()
