@@ -1,3 +1,11 @@
+<a name="1.1.1"></a>
+# 1.1.1 (2022/04/11)
+
+
+## Bug Fixes
+
+* correct plugin data reloading ([1bb7b885](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/1bb7b885))
+
 <a name="1.1.0"></a>
 ## 1.1.0 (2022/04/11)
 
