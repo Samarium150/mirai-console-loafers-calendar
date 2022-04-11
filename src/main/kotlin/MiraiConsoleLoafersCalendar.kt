@@ -16,6 +16,20 @@
  */
 package io.github.samarium150.mirai.plugin.loafers_calendar
 
+import io.github.samarium150.mirai.plugin.loafers_calendar.command.GetLoafersCalendar
+import io.github.samarium150.mirai.plugin.loafers_calendar.config.CommandConfig
+import io.github.samarium150.mirai.plugin.loafers_calendar.config.PluginConfig
+import io.github.samarium150.mirai.plugin.loafers_calendar.util.Subscription
+import io.github.samarium150.mirai.plugin.loafers_calendar.util.sendUpdate
+import io.ktor.client.*
+import it.justwrote.kjob.InMem
+import it.justwrote.kjob.job.JobExecutionType
+import it.justwrote.kjob.kjob
+import it.justwrote.kjob.kron.Kron
+import it.justwrote.kjob.kron.KronModule
+import net.mamoe.mirai.Bot
+import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
+import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 
@@ -28,7 +42,35 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
         author("Samarium")
     }
 ) {
+
+    internal val client = HttpClient()
+    private val job = kjob(InMem) {
+        extension(KronModule)
+        JobExecutionType.NON_BLOCKING
+    }
+
     override fun onEnable() {
+
+        PluginConfig.reload()
+        CommandConfig.reload()
+
+        GetLoafersCalendar.register()
+
+        job.start()(Kron).kron(Subscription) {
+            execute {
+                logger.info("推送订阅更新")
+                Bot.instances.forEach { bot ->
+                    bot.sendUpdate()
+                }
+            }
+        }
         logger.info("Plugin loaded")
+    }
+
+    override fun onDisable() {
+        job.shutdown()
+        GetLoafersCalendar.unregister()
+        client.close()
+        logger.info("Plugin unloaded")
     }
 }

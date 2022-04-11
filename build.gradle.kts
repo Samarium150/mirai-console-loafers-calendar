@@ -16,6 +16,24 @@ repositories {
     mavenCentral()
 }
 
+dependencies {
+    implementation("it.justwrote:kjob-core:0.2.0") {
+        exclude(group = "org.jetbrains.kotlin")
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+    }
+    implementation("it.justwrote:kjob-kron:0.2.0") {
+        exclude(group = "org.jetbrains.kotlin")
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+    }
+    implementation("it.justwrote:kjob-inmem:0.2.0") {
+        exclude(group = "org.jetbrains.kotlin")
+        exclude(group = "org.jetbrains.kotlinx")
+        exclude(group = "org.slf4j")
+    }
+}
+
 tasks {
     withType<KotlinCompile>().all {
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
