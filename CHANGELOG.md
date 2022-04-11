@@ -1,3 +1,11 @@
+<a name="1.1.0"></a>
+## 1.1.0 (2022/04/11)
+
+
+## Features
+
+* redesign Get command ([97fe8c58](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/97fe8c58))
+
 <a name="1.0.1"></a>
 # 1.0.1 (2022/04/11)
 
