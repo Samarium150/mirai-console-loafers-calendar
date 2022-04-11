@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "io.github.samarium150"
-version = "1.0.1"
+version = "1.1.0"
 
 repositories {
     maven("https://maven.aliyun.com/repository/public")
@@ -31,7 +31,6 @@ dependencies {
     implementation("it.justwrote:kjob-inmem:0.2.0") {
         exclude(group = "org.jetbrains.kotlin")
         exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
     }
 }
 

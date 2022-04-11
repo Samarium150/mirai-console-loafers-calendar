@@ -20,14 +20,20 @@ import io.github.samarium150.mirai.plugin.loafers_calendar.MiraiConsoleLoafersCa
 import io.github.samarium150.mirai.plugin.loafers_calendar.config.PluginConfig
 import io.github.samarium150.mirai.plugin.loafers_calendar.data.PluginData
 import io.ktor.client.call.*
+import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import it.justwrote.kjob.KronJob
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Contact.Companion.sendImage
 import java.io.InputStream
+import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+
+internal val logger by lazy {
+    MiraiConsoleLoafersCalendar.logger
+}
 
 internal val cacheFolder by lazy {
     val folder = MiraiConsoleLoafersCalendar.dataFolder.resolve("cache")
@@ -43,12 +49,19 @@ internal fun getUTC8Date(): Date {
     return Calendar.getInstance(TimeZone.getTimeZone("UTC+8")).time
 }
 
-internal suspend fun downloadLoafersCalender(): InputStream {
-    val file = cacheFolder.resolve(
-        "${SimpleDateFormat("yyyy-MM-dd").format(getUTC8Date())}.png"
-    )
+@Throws(ParseException::class)
+internal fun sanitizeDate(date: String?): String {
+    if (date == null) return SimpleDateFormat("yyyyMMdd").format(getUTC8Date())
+    SimpleDateFormat("yyyyMMdd").parse(date)
+    return date
+}
+
+@Throws(ParseException::class, ServerResponseException::class)
+internal suspend fun downloadLoafersCalender(date: String? = null): InputStream {
+    val target = sanitizeDate(date)
+    val file = cacheFolder.resolve("${target}.png")
     if (file.exists()) return file.inputStream()
-    val response: HttpResponse = httpClient.get("https://api.vvhan.com/api/moyu")
+    val response: HttpResponse = httpClient.get("https://api.j4u.ink/proxy/redirect/moyu/calendar/${target}.png")
     val body: ByteArray = response.receive()
     if (PluginConfig.save)
         file.writeBytes(body)

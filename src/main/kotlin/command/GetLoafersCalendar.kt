@@ -19,8 +19,9 @@ package io.github.samarium150.mirai.plugin.loafers_calendar.command
 import io.github.samarium150.mirai.plugin.loafers_calendar.MiraiConsoleLoafersCalendar
 import io.github.samarium150.mirai.plugin.loafers_calendar.config.CommandConfig
 import io.github.samarium150.mirai.plugin.loafers_calendar.config.PluginConfig
-import io.github.samarium150.mirai.plugin.loafers_calendar.util.cacheFolder
 import io.github.samarium150.mirai.plugin.loafers_calendar.util.downloadLoafersCalender
+import io.github.samarium150.mirai.plugin.loafers_calendar.util.logger
+import io.ktor.client.features.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import net.mamoe.mirai.console.command.CommandSender
@@ -29,8 +30,8 @@ import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.Contact.Companion.sendImage
+import java.text.ParseException
 
-@Suppress("unused")
 object GetLoafersCalendar : SimpleCommand(
     MiraiConsoleLoafersCalendar,
     primaryName = "loafers-calendar",
@@ -42,26 +43,25 @@ object GetLoafersCalendar : SimpleCommand(
     @ConsoleExperimentalApi
     override val prefixOptional = true
 
+    @Suppress("unused")
     @Handler
-    suspend fun CommandSender.handle() {
-        val inputStream = downloadLoafersCalender()
-        if (this is CommandSenderOnMessage<*>) {
-            fromEvent.subject.sendImage(inputStream)
-            withContext(Dispatchers.IO) {
-                inputStream.close()
+    suspend fun CommandSender.handle(date: String? = null) {
+        val inputStream = runCatching {
+            downloadLoafersCalender(date)
+        }.getOrElse {
+            when (it) {
+                is ParseException -> sendMessage("日期格式错误，请使用 yyyyMMdd 格式")
+                is ServerResponseException -> sendMessage("获取日历图片失败")
+                else -> logger.error(it)
             }
-        } else if (PluginConfig.save)
+            return@handle
+        }
+        if (this is CommandSenderOnMessage<*>)
+            fromEvent.subject.sendImage(inputStream)
+        else if (PluginConfig.save)
             sendMessage("图片已下载")
-    }
-
-    @Handler
-    suspend fun CommandSenderOnMessage<*>.handle(date: String) {
-        if (PluginConfig.save) {
-            if (date.matches(Regex("^\\d{4}-\\d{2}-\\d{2}$"))) {
-                val file = cacheFolder.resolve("${date}.png")
-                if (file.exists()) fromEvent.subject.sendImage(file)
-                else sendMessage("没有找${date}的日历图片")
-            } else sendMessage("日期格式错误，请使用 yyyy-MM-dd 格式")
-        } else sendMessage("仅支持获取保存过的日历图片，请先设置PluginConfig.save为true")
+        withContext(Dispatchers.IO) {
+            inputStream.close()
+        }
     }
 }
