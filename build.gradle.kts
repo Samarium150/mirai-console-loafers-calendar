@@ -6,6 +6,7 @@ plugins {
     kotlin("plugin.serialization") version kotlinVersion
 
     id("net.mamoe.mirai-console") version "2.10.1"
+    id("com.geoffgranum.gradle-conventional-changelog") version "+"
 }
 
 group = "io.github.samarium150"
@@ -38,5 +39,11 @@ tasks {
     withType<KotlinCompile>().all {
         kotlinOptions.freeCompilerArgs += "-opt-in=kotlin.RequiresOptIn"
         kotlinOptions.jvmTarget = "11"
+    }
+    changelog {
+        appName = project.name
+        versionNum = "$version"
+        repoUrl = "https://github.com/Samarium150/mirai-console-loafers-calendar"
+        trackerUrl = "https://github.com/Samarium150/mirai-console-loafers-calendar/issues"
     }
 }
