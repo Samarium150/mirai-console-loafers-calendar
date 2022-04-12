@@ -1,3 +1,11 @@
+<a name="1.1.2"></a>
+# 1.1.2 (2022/04/12)
+
+
+## Bug Fixes
+
+* correct typo in plugin id ([00059ec8](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/00059ec8))
+
 <a name="1.1.1"></a>
 # 1.1.1 (2022/04/11)
 
