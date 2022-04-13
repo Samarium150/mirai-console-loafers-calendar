@@ -56,13 +56,20 @@ internal fun sanitizeDate(date: String?): String {
     return date
 }
 
+internal fun isSunday(date: String): Boolean {
+    Calendar.getInstance().apply {
+        time = SimpleDateFormat("yyyyMMdd").parse(date)
+        return get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+    }
+}
+
 @Throws(ParseException::class, ServerResponseException::class, NotYetUpdatedException::class)
 internal suspend fun downloadLoafersCalender(date: String? = null): InputStream {
     val target = sanitizeDate(date)
     val file = cacheFolder.resolve("${target}.png")
     if (file.exists()) return file.inputStream()
     val response: HttpResponse = httpClient.get("https://api.j4u.ink/proxy/redirect/moyu/calendar/${target}.png")
-    if (target != "20211011" && response.headers["etag"] == "\"6251bbbb-d2781\"")
+    if (!isSunday(target) && response.headers["etag"] == "\"6251bbbb-d2781\"")
         throw NotYetUpdatedException("API is not updated yet")
     val body: ByteArray = response.receive()
     if (PluginConfig.save)
