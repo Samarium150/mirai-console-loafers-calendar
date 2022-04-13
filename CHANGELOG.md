@@ -1,3 +1,11 @@
+<a name="1.2.2"></a>
+# 1.2.2 (2022/04/13)
+
+
+## Bug Fixes
+
+* correct logic of throwing NotYetUpdatedException ([eaa27c9c](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/eaa27c9c))
+
 <a name="1.2.1"></a>
 # 1.2.1 (2022/04/13)
 
