@@ -1,3 +1,11 @@
+<a name="1.2.0"></a>
+## 1.2.0 (2022/04/13)
+
+
+## Features
+
+* add clean cache command ([a4809f8f](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/a4809f8f))
+
 <a name="1.1.2"></a>
 # 1.1.2 (2022/04/12)
 
