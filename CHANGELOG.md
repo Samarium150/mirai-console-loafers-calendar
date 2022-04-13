@@ -1,3 +1,11 @@
+<a name="1.2.1"></a>
+# 1.2.1 (2022/04/13)
+
+
+## Bug Fixes
+
+* correct typo in the primary name of clean cache command ([69de1270](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/69de1270))
+
 <a name="1.2.0"></a>
 ## 1.2.0 (2022/04/13)
 
