@@ -29,7 +29,7 @@ import java.text.ParseException
 
 object Clean : SimpleCommand(
     MiraiConsoleLoafersCalendar,
-    primaryName = "/clean-calendar-cache",
+    primaryName = "clean-calendar-cache",
     secondaryNames = CommandConfig.cleanCalendarCache,
     description = "清理日历缓存指令"
 ) {
