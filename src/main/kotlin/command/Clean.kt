@@ -19,27 +19,20 @@ package io.github.samarium150.mirai.plugin.loafers_calendar.command
 import io.github.samarium150.mirai.plugin.loafers_calendar.MiraiConsoleLoafersCalendar
 import io.github.samarium150.mirai.plugin.loafers_calendar.config.CommandConfig
 import io.github.samarium150.mirai.plugin.loafers_calendar.config.PluginConfig
-import io.github.samarium150.mirai.plugin.loafers_calendar.util.NotYetUpdatedException
-import io.github.samarium150.mirai.plugin.loafers_calendar.util.downloadLoafersCalender
+import io.github.samarium150.mirai.plugin.loafers_calendar.util.cleanCalendarCache
 import io.github.samarium150.mirai.plugin.loafers_calendar.util.logger
-import io.ktor.client.features.*
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
 import net.mamoe.mirai.console.command.CommandSender
-import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
-import net.mamoe.mirai.contact.Contact.Companion.sendImage
 import java.text.ParseException
 
-object GetLoafersCalendar : SimpleCommand(
+object Clean : SimpleCommand(
     MiraiConsoleLoafersCalendar,
-    primaryName = "loafers-calendar",
-    secondaryNames = CommandConfig.getLoafersCalendar,
-    description = "获取摸鱼人日历指令"
+    primaryName = "/clean-calendar-cache",
+    secondaryNames = CommandConfig.cleanCalendarCache,
+    description = "清理日历缓存指令"
 ) {
-
     @ExperimentalCommandDescriptors
     @ConsoleExperimentalApi
     override val prefixOptional = true
@@ -47,23 +40,15 @@ object GetLoafersCalendar : SimpleCommand(
     @Suppress("unused")
     @Handler
     suspend fun CommandSender.handle(date: String? = null) {
-        val inputStream = runCatching {
-            downloadLoafersCalender(date)
-        }.getOrElse {
-            when (it) {
-                is ParseException -> sendMessage("日期格式错误，请使用 yyyyMMdd 格式")
-                is ServerResponseException -> sendMessage("获取日历图片失败")
-                is NotYetUpdatedException -> sendMessage("日历图片还未更新")
-                else -> logger.error(it)
+        if (PluginConfig.save) {
+            cleanCalendarCache(date).onFailure {
+                if (it is ParseException)
+                    sendMessage("日期格式错误，请使用 yyyyMMdd 格式")
+                else
+                    logger.error(it)
+            }.onSuccess {
+                sendMessage("清理成功")
             }
-            return@handle
-        }
-        if (this is CommandSenderOnMessage<*>)
-            fromEvent.subject.sendImage(inputStream)
-        else if (PluginConfig.save)
-            sendMessage("图片已下载")
-        withContext(Dispatchers.IO) {
-            inputStream.close()
         }
     }
 }

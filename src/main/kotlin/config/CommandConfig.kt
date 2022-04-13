@@ -29,4 +29,7 @@ object CommandConfig : AutoSavePluginConfig("CommandConfig") {
 
     @ValueDescription("取消订阅摸鱼人日历指令的别名")
     val unsubscribeCalendar by value(arrayOf("ulc", "取消订阅日历"))
+
+    @ValueDescription("清理日历缓存指令的别名")
+    val cleanCalendarCache by value(arrayOf("ccc", "清理日历缓存"))
 }

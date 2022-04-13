@@ -14,16 +14,6 @@
  * You should have received a copy of the GNU Affero General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/agpl-3.0.txt>
  */
-package io.github.samarium150.mirai.plugin.loafers_calendar.config
+package io.github.samarium150.mirai.plugin.loafers_calendar.util
 
-import net.mamoe.mirai.console.data.AutoSavePluginConfig
-import net.mamoe.mirai.console.data.ValueDescription
-import net.mamoe.mirai.console.data.value
-
-object PluginConfig : AutoSavePluginConfig("PluginConfig") {
-    @ValueDescription("是否保存图片")
-    val save: Boolean by value(true)
-
-    @ValueDescription("Cron表达式")
-    val cron: String by value("0 0 12 ? * MON-SAT *")
-}
+class NotYetUpdatedException(message: String) : Exception(message)

@@ -16,6 +16,7 @@
  */
 package io.github.samarium150.mirai.plugin.loafers_calendar
 
+import io.github.samarium150.mirai.plugin.loafers_calendar.command.Clean
 import io.github.samarium150.mirai.plugin.loafers_calendar.command.GetLoafersCalendar
 import io.github.samarium150.mirai.plugin.loafers_calendar.command.Subscribe
 import io.github.samarium150.mirai.plugin.loafers_calendar.command.Unsubscribe
@@ -40,7 +41,7 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-loafers-calendar",
         name = "Loafers' Calender",
-        version = "1.1.2",
+        version = "1.2.0",
     ) {
         author("Samarium")
     }
@@ -62,6 +63,7 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
         GetLoafersCalendar.register()
         Subscribe.register()
         Unsubscribe.register()
+        Clean.register()
 
         job.start()(Kron).kron(Subscription) {
             execute {
