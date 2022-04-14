@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "io.github.samarium150"
-version = "1.2.2"
+version = "1.3.0"
 
 repositories {
     maven("https://maven.aliyun.com/repository/public")
@@ -18,19 +18,8 @@ repositories {
 }
 
 dependencies {
-    implementation("it.justwrote:kjob-core:0.2.0") {
-        exclude(group = "org.jetbrains.kotlin")
-        exclude(group = "org.jetbrains.kotlinx")
+    implementation("org.quartz-scheduler:quartz:2.3.2") {
         exclude(group = "org.slf4j")
-    }
-    implementation("it.justwrote:kjob-kron:0.2.0") {
-        exclude(group = "org.jetbrains.kotlin")
-        exclude(group = "org.jetbrains.kotlinx")
-        exclude(group = "org.slf4j")
-    }
-    implementation("it.justwrote:kjob-inmem:0.2.0") {
-        exclude(group = "org.jetbrains.kotlin")
-        exclude(group = "org.jetbrains.kotlinx")
     }
 }
 

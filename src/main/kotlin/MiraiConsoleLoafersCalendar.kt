@@ -24,33 +24,42 @@ import io.github.samarium150.mirai.plugin.loafers_calendar.config.CommandConfig
 import io.github.samarium150.mirai.plugin.loafers_calendar.config.PluginConfig
 import io.github.samarium150.mirai.plugin.loafers_calendar.data.PluginData
 import io.github.samarium150.mirai.plugin.loafers_calendar.util.Subscription
-import io.github.samarium150.mirai.plugin.loafers_calendar.util.sendUpdate
+import io.github.samarium150.mirai.plugin.loafers_calendar.util.getScheduler
 import io.ktor.client.*
-import it.justwrote.kjob.InMem
-import it.justwrote.kjob.job.JobExecutionType
-import it.justwrote.kjob.kjob
-import it.justwrote.kjob.kron.Kron
-import it.justwrote.kjob.kron.KronModule
-import net.mamoe.mirai.Bot
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
+import org.quartz.CronScheduleBuilder
+import org.quartz.TriggerBuilder
+import java.util.*
 
 object MiraiConsoleLoafersCalendar : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-loafers-calendar",
         name = "Loafers' Calender",
-        version = "1.2.2",
+        version = "1.3.0",
     ) {
         author("Samarium")
     }
 ) {
 
     internal val client = HttpClient()
-    private val job = kjob(InMem) {
-        extension(KronModule)
-        JobExecutionType.NON_BLOCKING
+    private val scheduler = getScheduler()
+
+    private fun setupQuartz(schedule: String) {
+        val jobDetail = Subscription.init()
+        val trigger = TriggerBuilder.newTrigger()
+            .withIdentity("subscription", "mirai-console-loafers-calendar")
+            .startNow()
+            .withSchedule(
+                CronScheduleBuilder
+                    .cronSchedule(schedule)
+                    .inTimeZone(TimeZone.getTimeZone("UTC+8"))
+            )
+            .forJob(jobDetail)
+            .build()
+        scheduler.scheduleJob(jobDetail, trigger)
     }
 
     override fun onEnable() {
@@ -65,23 +74,22 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
         Unsubscribe.register()
         Clean.register()
 
-        job.start()(Kron).kron(Subscription) {
-            execute {
-                logger.info("推送订阅更新")
-                Bot.instances.forEach { bot ->
-                    bot.sendUpdate()
-                }
-            }
-        }
+        setupQuartz(PluginConfig.cron)
+        scheduler.start()
+
         logger.info("Plugin loaded")
     }
 
     override fun onDisable() {
-        job.shutdown()
+
+        scheduler.shutdown(true)
+
         GetLoafersCalendar.unregister()
         Subscribe.unregister()
         Unsubscribe.unregister()
+
         client.close()
+
         logger.info("Plugin unloaded")
     }
 }

@@ -23,9 +23,14 @@ import io.ktor.client.call.*
 import io.ktor.client.features.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
-import it.justwrote.kjob.KronJob
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Contact.Companion.sendImage
+import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
+import org.quartz.Scheduler
+import org.quartz.impl.StdSchedulerFactory
 import java.io.InputStream
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -77,17 +82,26 @@ internal suspend fun downloadLoafersCalender(date: String? = null): InputStream 
     return body.inputStream()
 }
 
-internal object Subscription : KronJob("subscription", PluginConfig.cron)
+internal fun getScheduler(): Scheduler {
+    val config = MiraiConsoleLoafersCalendar.configFolder.resolve("quartz.properties")
+    return if (config.exists()) StdSchedulerFactory(config.path).scheduler
+    else StdSchedulerFactory.getDefaultScheduler()
+}
 
-internal suspend fun Bot.sendUpdate() {
-    val inputStream = downloadLoafersCalender()
-    this.friends.forEach {
+internal fun Bot.sendUpdate() = MiraiConsoleLoafersCalendar.launch {
+    val resource = downloadLoafersCalender().toExternalResource()
+    logger.info("推送到好友")
+    friends.forEach {
         if (PluginData.subscribedFriends.contains(it.id))
-            it.sendImage(inputStream)
+            it.sendImage(resource)
     }
-    this.groups.forEach {
+    logger.info("推送到群")
+    groups.forEach {
         if (PluginData.subscribedGroups.contains(it.id))
-            it.sendImage(inputStream)
+            it.sendImage(resource)
+    }
+    withContext(Dispatchers.IO) {
+        resource.close()
     }
 }
 
