@@ -1,3 +1,11 @@
+<a name="1.3.0"></a>
+## 1.3.0 (2022/04/14)
+
+
+## Features
+
+* redesign subscription system ([a744ca7c](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/a744ca7c))
+
 <a name="1.2.2"></a>
 # 1.2.2 (2022/04/13)
 
