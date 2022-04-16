@@ -38,7 +38,7 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-loafers-calendar",
         name = "Loafers' Calender",
-        version = "1.3.0",
+        version = "1.4.0",
     ) {
         author("Samarium")
     }
@@ -47,7 +47,7 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
     internal val client = HttpClient()
     private val scheduler = getScheduler()
 
-    private fun setupQuartz(schedule: String) {
+    private fun setupQuartz(schedule: String, timezone: String) {
         val jobDetail = Subscription.init()
         val trigger = TriggerBuilder.newTrigger()
             .withIdentity("subscription", "mirai-console-loafers-calendar")
@@ -55,7 +55,7 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
             .withSchedule(
                 CronScheduleBuilder
                     .cronSchedule(schedule)
-                    .inTimeZone(TimeZone.getTimeZone("GTM+08:00"))
+                    .inTimeZone(TimeZone.getTimeZone(timezone))
             )
             .forJob(jobDetail)
             .build()
@@ -74,7 +74,7 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
         Unsubscribe.register()
         Clean.register()
 
-        setupQuartz(PluginConfig.cron)
+        setupQuartz(PluginConfig.cron, PluginConfig.timezone)
         scheduler.start()
 
         logger.info("Plugin loaded")

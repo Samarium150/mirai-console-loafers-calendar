@@ -26,4 +26,7 @@ object PluginConfig : AutoSavePluginConfig("PluginConfig") {
 
     @ValueDescription("Cron表达式")
     val cron: String by value("0 0 12 ? * MON-SAT *")
+
+    @ValueDescription("执行Cron表达式的时区")
+    val timezone: String by value("GMT+08:00")
 }
