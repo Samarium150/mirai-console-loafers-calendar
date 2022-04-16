@@ -1,3 +1,15 @@
+<a name="1.4.0"></a>
+## 1.4.0 (2022/04/16)
+
+
+## Bug Fixes
+
+* correct timezone id ([098a8a0d](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/098a8a0d))
+
+## Features
+
+* add config for timezone ([fc854874](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/fc854874))
+
 <a name="1.3.0"></a>
 ## 1.3.0 (2022/04/14)
 
