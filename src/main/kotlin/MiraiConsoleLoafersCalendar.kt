@@ -55,7 +55,7 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
             .withSchedule(
                 CronScheduleBuilder
                     .cronSchedule(schedule)
-                    .inTimeZone(TimeZone.getTimeZone("UTC+8"))
+                    .inTimeZone(TimeZone.getTimeZone("GTM+08:00"))
             )
             .forJob(jobDetail)
             .build()
