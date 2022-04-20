@@ -1,3 +1,11 @@
+<a name="1.5.0"></a>
+## 1.5.0 (2022/04/20)
+
+
+## Features
+
+* allow group operators to subscribe and unsubscribe (#1) ([2b572b59](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/2b572b59))
+
 <a name="1.4.0"></a>
 ## 1.4.0 (2022/04/16)
 
