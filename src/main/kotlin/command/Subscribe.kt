@@ -24,7 +24,7 @@ import net.mamoe.mirai.console.command.MemberCommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
-import net.mamoe.mirai.contact.MemberPermission
+import net.mamoe.mirai.contact.isOperator
 import net.mamoe.mirai.message.data.MessageSource.Key.quote
 
 @Suppress("unused")
@@ -40,20 +40,22 @@ object Subscribe : SimpleCommand(
 
     @Handler
     suspend fun FriendCommandSenderOnMessage.handle() {
+        val quote = fromEvent.source.quote()
         if (PluginData.subscribedFriends.add(fromEvent.sender.id))
-            sendMessage(fromEvent.source.quote() + "已订阅日历更新推送")
+            sendMessage(quote + "已订阅日历更新推送")
         else
-            sendMessage(fromEvent.source.quote() + "已经订阅过了")
+            sendMessage(quote + "已经订阅过了")
     }
 
     @Handler
     suspend fun MemberCommandSenderOnMessage.handle() {
         val sender = fromEvent.sender
-        if (sender.permission == MemberPermission.OWNER && PluginData.subscribedGroups.add(fromEvent.subject.id))
-            sendMessage(fromEvent.source.quote() + "已订阅日历更新推送")
-        else if (sender.permission != MemberPermission.OWNER)
-            sendMessage(fromEvent.source.quote() + "只有群主才能订阅日历更新推送")
-        else
-            sendMessage(fromEvent.source.quote() + "已经订阅过了")
+        val quote = fromEvent.source.quote()
+        val isOperator = sender.isOperator()
+        if (isOperator && PluginData.subscribedGroups.add(fromEvent.subject.id))
+            sendMessage(quote + "已订阅日历更新推送")
+        else if (isOperator)
+            sendMessage(quote + "已经订阅过了")
+        else sendMessage(quote + "只有群主或管理员才能订阅日历更新推送")
     }
 }

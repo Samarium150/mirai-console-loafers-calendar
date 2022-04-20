@@ -24,7 +24,7 @@ import net.mamoe.mirai.console.command.MemberCommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
 import net.mamoe.mirai.console.command.descriptor.ExperimentalCommandDescriptors
 import net.mamoe.mirai.console.util.ConsoleExperimentalApi
-import net.mamoe.mirai.contact.MemberPermission
+import net.mamoe.mirai.contact.isOperator
 import net.mamoe.mirai.message.data.MessageSource.Key.quote
 
 @Suppress("unused")
@@ -40,20 +40,23 @@ object Unsubscribe : SimpleCommand(
 
     @Handler
     suspend fun FriendCommandSenderOnMessage.handle() {
+        val quote = fromEvent.source.quote()
         if (PluginData.subscribedFriends.remove(fromEvent.sender.id))
-            sendMessage(fromEvent.source.quote() + "取消订阅成功")
+            sendMessage(quote + "取消订阅成功")
         else
-            sendMessage(fromEvent.source.quote() + "你没有订阅过日历更新推送")
+            sendMessage(quote + "你没有订阅过日历更新推送")
     }
 
     @Handler
     suspend fun MemberCommandSenderOnMessage.handle() {
         val sender = fromEvent.sender
-        if (sender.permission == MemberPermission.OWNER && PluginData.subscribedGroups.remove(fromEvent.subject.id))
-            sendMessage(fromEvent.source.quote() + "取消订阅成功")
-        else if (sender.permission != MemberPermission.OWNER)
-            sendMessage(fromEvent.source.quote() + "只有群主才能取消订阅")
+        val quote = fromEvent.source.quote()
+        val isOperator = sender.isOperator()
+        if (isOperator && PluginData.subscribedGroups.remove(fromEvent.subject.id))
+            sendMessage(quote + "取消订阅成功")
+        else if (isOperator)
+            sendMessage(quote + "只有群主和管理员才能取消订阅")
         else
-            sendMessage(fromEvent.source.quote() + "本群没有订阅过日历更新推送")
+            sendMessage(quote + "本群没有订阅过日历更新推送")
     }
 }
