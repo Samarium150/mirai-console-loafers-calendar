@@ -38,7 +38,7 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-loafers-calendar",
         name = "Loafers' Calender",
-        version = "1.4.0",
+        version = "1.5.0",
     ) {
         author("Samarium")
     }
