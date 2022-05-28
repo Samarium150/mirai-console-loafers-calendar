@@ -1,3 +1,19 @@
+<a name="1.6.0"></a>
+## 1.6.0 (2022/05/28)
+
+
+## Refactor
+
+* use hutool-cron instead of quartz
+
+<a name="1.5.1"></a>
+# 1.5.1 (2022/05/28)
+
+
+## Features
+
+* support mirai-console 2.11 ([fbea522c](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/fbea522c))
+
 <a name="1.5.0"></a>
 ## 1.5.0 (2022/04/20)
 
