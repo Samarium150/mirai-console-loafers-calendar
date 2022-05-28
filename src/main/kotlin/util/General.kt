@@ -25,12 +25,10 @@ import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.runInterruptible
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Contact.Companion.sendImage
 import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
-import org.quartz.Scheduler
-import org.quartz.impl.StdSchedulerFactory
 import java.io.InputStream
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -82,12 +80,6 @@ internal suspend fun downloadLoafersCalender(date: String? = null): InputStream 
     return body.inputStream()
 }
 
-internal fun getScheduler(): Scheduler {
-    val config = MiraiConsoleLoafersCalendar.configFolder.resolve("quartz.properties")
-    return if (config.exists()) StdSchedulerFactory(config.path).scheduler
-    else StdSchedulerFactory.getDefaultScheduler()
-}
-
 internal fun Bot.sendUpdate() = MiraiConsoleLoafersCalendar.launch {
     val resource = downloadLoafersCalender().toExternalResource()
     logger.info("推送到好友")
@@ -100,20 +92,22 @@ internal fun Bot.sendUpdate() = MiraiConsoleLoafersCalendar.launch {
         if (PluginData.subscribedGroups.contains(it.id))
             it.sendImage(resource)
     }
-    withContext(Dispatchers.IO) {
+    runInterruptible(Dispatchers.IO) {
         resource.close()
     }
 }
 
 internal fun cleanCalendarCache(date: String?) = runCatching {
     if (date == null) {
-        cacheFolder.listFiles().forEach {
+        cacheFolder.listFiles()?.forEach {
             if (it.isFile && it.name.endsWith(".png"))
                 it.delete()
         }
     } else {
         val file = cacheFolder.resolve("${sanitizeDate(date)}.png")
-        if (file.exists())
+        if (file.isFile)
             file.delete()
+        else
+            return@runCatching
     }
 }

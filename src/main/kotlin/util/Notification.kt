@@ -16,23 +16,11 @@
  */
 package io.github.samarium150.mirai.plugin.loafers_calendar.util
 
+import cn.hutool.cron.task.Task
 import net.mamoe.mirai.Bot
-import org.quartz.*
 
-internal class Subscription : Job {
-
-    companion object {
-        @JvmStatic
-        fun init(): JobDetail {
-            return JobBuilder.newJob(Subscription::class.java)
-                .storeDurably(true)
-                .withIdentity("subscription", "mirai-console-loafers-calendar")
-                .build()
-        }
-    }
-
-    @Throws(JobExecutionException::class)
-    override fun execute(context: JobExecutionContext) {
+internal object Notification : Task {
+    override fun execute() {
         logger.info("推送日历订阅更新")
         Bot.instances.filter {
             it.isOnline

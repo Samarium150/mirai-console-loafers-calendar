@@ -10,7 +10,7 @@ plugins {
 }
 
 group = "io.github.samarium150"
-version = "1.5.1"
+version = "1.6.0"
 
 repositories {
     maven("https://maven.aliyun.com/repository/public")
@@ -18,9 +18,7 @@ repositories {
 }
 
 dependencies {
-    implementation("org.quartz-scheduler:quartz:2.3.2") {
-        exclude(group = "org.slf4j")
-    }
+    implementation("cn.hutool:hutool-cron:5.8.2")
 }
 
 tasks {
