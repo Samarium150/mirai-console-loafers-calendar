@@ -14,4 +14,4 @@
 
 日历图片示例
 
-<img src="https://api.vvhan.com/api/moyu" alt="example" width="250" />
+<img src="docs/20220411.png" alt="example" width="250" />
