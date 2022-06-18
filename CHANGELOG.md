@@ -1,3 +1,11 @@
+<a name="1.7.0"></a>
+## 1.7.0 (2022/06/18)
+
+
+## Features
+
+* support mirai-console 2.12 ([0d69e43d](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/0d69e43d))
+
 <a name="1.6.0"></a>
 ## 1.6.0 (2022/05/28)
 
