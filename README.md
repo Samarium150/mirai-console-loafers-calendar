@@ -8,7 +8,7 @@
 
 从微信公众号`摸鱼人日历`的 [API](https://api.j4u.ink/proxy/redirect/moyu/calendar/20220528.png) 获取日历图片并发送, 支持订阅自动推送
 
-适配 [mirai-console](https://github.com/mamoe/mirai) [![Version](https://img.shields.io/badge/version-2.11.1-blue)](https://github.com/mamoe/mirai/releases/tag/v2.11.1)
+适配 [mirai-console](https://github.com/mamoe/mirai) [![Version](https://img.shields.io/badge/version-2.12.0-blue)](https://github.com/mamoe/mirai/releases/tag/v2.12.0-RC)
 
 具体使用文档放在了 [wiki](https://github.com/Samarium150/mirai-console-loafers-calendar/wiki) 页面
 

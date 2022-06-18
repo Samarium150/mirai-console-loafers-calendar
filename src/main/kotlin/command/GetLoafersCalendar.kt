@@ -24,7 +24,7 @@ import io.github.samarium150.mirai.plugin.loafers_calendar.util.downloadLoafersC
 import io.github.samarium150.mirai.plugin.loafers_calendar.util.logger
 import io.ktor.client.features.*
 import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.withContext
+import kotlinx.coroutines.runInterruptible
 import net.mamoe.mirai.console.command.CommandSender
 import net.mamoe.mirai.console.command.CommandSenderOnMessage
 import net.mamoe.mirai.console.command.SimpleCommand
@@ -44,7 +44,6 @@ object GetLoafersCalendar : SimpleCommand(
     @ConsoleExperimentalApi
     override val prefixOptional = true
 
-    @Suppress("unused")
     @Handler
     suspend fun CommandSender.handle(date: String? = null) {
         val inputStream = runCatching {
@@ -62,7 +61,7 @@ object GetLoafersCalendar : SimpleCommand(
             fromEvent.subject.sendImage(inputStream)
         else if (PluginConfig.save)
             sendMessage("图片已下载")
-        withContext(Dispatchers.IO) {
+        runInterruptible(Dispatchers.IO) {
             inputStream.close()
         }
     }

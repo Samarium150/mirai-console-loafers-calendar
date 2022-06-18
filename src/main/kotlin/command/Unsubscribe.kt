@@ -27,7 +27,6 @@ import net.mamoe.mirai.console.util.ConsoleExperimentalApi
 import net.mamoe.mirai.contact.isOperator
 import net.mamoe.mirai.message.data.MessageSource.Key.quote
 
-@Suppress("unused")
 object Unsubscribe : SimpleCommand(
     MiraiConsoleLoafersCalendar,
     primaryName = "unsubscribe-loafers-calendar",

@@ -37,7 +37,6 @@ object Clean : SimpleCommand(
     @ConsoleExperimentalApi
     override val prefixOptional = true
 
-    @Suppress("unused")
     @Handler
     suspend fun CommandSender.handle(date: String? = null) {
         if (PluginConfig.save) {

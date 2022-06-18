@@ -5,12 +5,12 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.11.1"
+    id("net.mamoe.mirai-console") version "2.12.0-RC"
     id("com.geoffgranum.gradle-conventional-changelog") version "+"
 }
 
 group = "io.github.samarium150"
-version = "1.6.0"
+version = "1.7.0"
 
 repositories {
     maven("https://maven.aliyun.com/repository/public")
@@ -18,7 +18,7 @@ repositories {
 }
 
 dependencies {
-    implementation("cn.hutool:hutool-cron:5.8.2")
+    implementation("cn.hutool:hutool-cron:5.8.3")
 }
 
 tasks {
