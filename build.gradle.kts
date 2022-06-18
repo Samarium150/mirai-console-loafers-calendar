@@ -10,10 +10,9 @@ plugins {
 }
 
 group = "io.github.samarium150"
-version = "1.7.0"
+version = "1.7.1"
 
 repositories {
-    maven("https://maven.aliyun.com/repository/public")
     mavenCentral()
 }
 
