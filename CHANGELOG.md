@@ -1,3 +1,19 @@
+<a name="1.8.0"></a>
+## 1.8.0 (2022/07/10)
+
+
+## Features
+
+* add timeout config ([e79a8af2](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/e79a8af2))
+
+<a name="1.7.1"></a>
+# 1.7.1 (2022/07/10)
+
+
+## Bug Fixes
+
+* remove aliyun maven ([6b701c58](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/6b701c58))
+
 <a name="1.7.0"></a>
 ## 1.7.0 (2022/06/18)
 
