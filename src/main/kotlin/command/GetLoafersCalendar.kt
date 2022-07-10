@@ -22,7 +22,7 @@ import io.github.samarium150.mirai.plugin.loafers_calendar.config.PluginConfig
 import io.github.samarium150.mirai.plugin.loafers_calendar.util.NotYetUpdatedException
 import io.github.samarium150.mirai.plugin.loafers_calendar.util.downloadLoafersCalender
 import io.github.samarium150.mirai.plugin.loafers_calendar.util.logger
-import io.ktor.client.features.*
+import io.ktor.client.plugins.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.runInterruptible
 import net.mamoe.mirai.console.command.CommandSender

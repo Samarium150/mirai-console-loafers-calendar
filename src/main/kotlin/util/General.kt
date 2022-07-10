@@ -20,9 +20,10 @@ import io.github.samarium150.mirai.plugin.loafers_calendar.MiraiConsoleLoafersCa
 import io.github.samarium150.mirai.plugin.loafers_calendar.config.PluginConfig
 import io.github.samarium150.mirai.plugin.loafers_calendar.data.PluginData
 import io.ktor.client.call.*
-import io.ktor.client.features.*
+import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
+import io.ktor.http.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
@@ -72,9 +73,9 @@ internal suspend fun downloadLoafersCalender(date: String? = null): InputStream 
     val file = cacheFolder.resolve("${target}.png")
     if (file.exists()) return file.inputStream()
     val response: HttpResponse = httpClient.get("https://api.j4u.ink/proxy/redirect/moyu/calendar/${target}.png")
-    if (!isSunday(target) && response.headers["etag"] == "\"6251bbbb-d2781\"")
+    if (!isSunday(target) && response.etag() == "\"6251bbbb-d2781\"")
         throw NotYetUpdatedException("API is not updated yet")
-    val body: ByteArray = response.receive()
+    val body: ByteArray = response.body()
     if (PluginConfig.save)
         file.writeBytes(body)
     return body.inputStream()

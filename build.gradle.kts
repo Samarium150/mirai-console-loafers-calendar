@@ -1,16 +1,16 @@
 import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 plugins {
-    val kotlinVersion = "1.6.21"
+    val kotlinVersion = "1.7.0"
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.12.0-RC"
+    id("net.mamoe.mirai-console") version "2.12.0"
     id("com.geoffgranum.gradle-conventional-changelog") version "+"
 }
 
 group = "io.github.samarium150"
-version = "1.7.1"
+version = "1.8.0"
 
 repositories {
     mavenCentral()
@@ -18,6 +18,10 @@ repositories {
 
 dependencies {
     implementation("cn.hutool:hutool-cron:5.8.3")
+    implementation("io.ktor:ktor-client-okhttp:2.0.3") {
+        exclude(group = "org.jetbrains.kotlin")
+        exclude(group = "org.jetbrains.kotlinx")
+    }
 }
 
 tasks {

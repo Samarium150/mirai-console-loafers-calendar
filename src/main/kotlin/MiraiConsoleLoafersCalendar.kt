@@ -23,9 +23,12 @@ import io.github.samarium150.mirai.plugin.loafers_calendar.command.Subscribe
 import io.github.samarium150.mirai.plugin.loafers_calendar.command.Unsubscribe
 import io.github.samarium150.mirai.plugin.loafers_calendar.config.CommandConfig
 import io.github.samarium150.mirai.plugin.loafers_calendar.config.PluginConfig
+import io.github.samarium150.mirai.plugin.loafers_calendar.config.TimeoutConfig
 import io.github.samarium150.mirai.plugin.loafers_calendar.data.PluginData
 import io.github.samarium150.mirai.plugin.loafers_calendar.util.Notification
 import io.ktor.client.*
+import io.ktor.client.engine.okhttp.*
+import io.ktor.client.plugins.*
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.register
 import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
@@ -42,7 +45,7 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
     }
 ) {
 
-    internal val client = HttpClient()
+    internal lateinit var client: HttpClient
 
     private fun setupScheduler(cronExpression: String, timezone: String) {
         CronUtil.schedule(cronExpression, Notification)
@@ -54,8 +57,19 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
 
         PluginConfig.reload()
         CommandConfig.reload()
+        TimeoutConfig.reload()
 
         PluginData.reload()
+
+        client = HttpClient(OkHttp) {
+            install(HttpTimeout) {
+                TimeoutConfig().apply {
+                    requestTimeoutMillis = first
+                    connectTimeoutMillis = second
+                    socketTimeoutMillis = third
+                }
+            }
+        }
 
         GetLoafersCalendar.register()
         Subscribe.register()
