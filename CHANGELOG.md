@@ -1,3 +1,10 @@
+<a name="1.8.1"></a>
+# 1.8.1 (2022/09/29)
+
+## Build
+
+* update dependencies ([82bce996](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/82bce996))
+
 <a name="1.8.0"></a>
 ## 1.8.0 (2022/07/10)
 
