@@ -18,6 +18,8 @@ repositories {
 
 dependencies {
     implementation("cn.hutool:hutool-cron:5.8.7")
+    implementation("com.github.jai-imageio:jai-imageio-core:1.4.0")
+    implementation("com.github.zakgof:webp4j:0.0.2")
     implementation("io.ktor:ktor-client-okhttp:2.1.1") {
         exclude(group = "org.jetbrains.kotlin")
         exclude(group = "org.jetbrains.kotlinx")
