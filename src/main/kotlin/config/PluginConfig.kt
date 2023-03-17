@@ -21,9 +21,6 @@ import net.mamoe.mirai.console.data.ValueDescription
 import net.mamoe.mirai.console.data.value
 
 object PluginConfig : AutoSavePluginConfig("PluginConfig") {
-    @ValueDescription("获取图片时调用的api\n默认使用 https://j4u.ink/moyuya/\n遇到问题请尝试更换为 https://api.vvhan.com/api/moyu")
-    val api: String by value("https://j4u.ink/moyuya/")
-    
     @ValueDescription("是否保存图片")
     val save: Boolean by value(true)
 

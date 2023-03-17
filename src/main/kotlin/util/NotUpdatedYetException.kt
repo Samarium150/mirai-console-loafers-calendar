@@ -16,4 +16,4 @@
  */
 package io.github.samarium150.mirai.plugin.loafers_calendar.util
 
-class NotYetUpdatedException(message: String) : Exception(message)
+class NotUpdatedYetException(message: String) : Exception(message)

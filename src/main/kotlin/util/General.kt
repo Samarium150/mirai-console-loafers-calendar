@@ -16,7 +16,6 @@
  */
 package io.github.samarium150.mirai.plugin.loafers_calendar.util
 
-import com.zakgof.webp4j.Webp4j
 import io.github.samarium150.mirai.plugin.loafers_calendar.MiraiConsoleLoafersCalendar
 import io.github.samarium150.mirai.plugin.loafers_calendar.config.PluginConfig
 import io.github.samarium150.mirai.plugin.loafers_calendar.data.PluginData
@@ -70,45 +69,25 @@ internal fun isSunday(date: String): Boolean {
     }
 }
 
-internal fun isWebPImage(data: ByteArray): Boolean {
-    val riff = "RIFF".toByteArray(Charsets.UTF_8)
-    val webp = "WEBP".toByteArray(Charsets.UTF_8)
-    if (data.size < 12) {
-        return false
+internal suspend fun convertWebPToPNG(webpData: ByteArray): ByteArray {
+    return runInterruptible {
+        val output = ByteArrayOutputStream()
+        ImageIO.write(ImageIO.read(webpData.inputStream()), "png", output)
+        return@runInterruptible output.toByteArray()
     }
-    if (!data.copyOfRange(0, 4).contentEquals(riff)) {
-        return false
-    }
-    if (!data.copyOfRange(8, 12).contentEquals(webp)) {
-        return false
-    }
-    return true
 }
 
-internal fun convertWebPToPNG(webpData: ByteArray): ByteArray {
-    val outputStream = ByteArrayOutputStream()
-    val image = Webp4j.decode(webpData)
-    ImageIO.write(image, "png", outputStream)
-    return outputStream.toByteArray()
-}
-
-@Throws(ParseException::class, ServerResponseException::class, NotYetUpdatedException::class)
+@Throws(ParseException::class, ServerResponseException::class, NotUpdatedYetException::class)
 internal suspend fun downloadLoafersCalender(date: String? = null): InputStream {
     val target = sanitizeDate(date)
     val file = cacheFolder.resolve("$target.png")
     if (file.exists()) return file.inputStream()
-    var api = PluginConfig.api
-    var j4uApi = false
-    if(api == "https://j4u.ink/moyuya" || api == "https://j4u.ink/moyuya/") {
-        api = "https://api.j4u.ink/proxy/redirect/moyu/calendar/$target.png"
-        j4uApi = true
-    }
-    val response: HttpResponse = httpClient.get(api)
+    val response: HttpResponse = httpClient.get("https://api.j4u.ink/proxy/redirect/moyu/calendar/$target.png")
     var body: ByteArray = response.body()
-    if(j4uApi && isWebPImage(body))
+    if (!isSunday(target) && response.etag() == "\"6251bbbb-d2781\"")
+        throw NotUpdatedYetException("API is not updated yet")
+    if (response.headers["Content-Type"] == "image/webp")
         body = convertWebPToPNG(body)
-    if (j4uApi && !isSunday(target) && response.etag() == "\"6251bbbb-d2781\"")
-        throw NotYetUpdatedException("API is not updated yet")
     if (PluginConfig.save)
         file.writeBytes(body)
     return body.inputStream()
