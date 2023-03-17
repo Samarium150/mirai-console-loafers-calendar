@@ -17,6 +17,7 @@
 package io.github.samarium150.mirai.plugin.loafers_calendar
 
 import cn.hutool.cron.CronUtil
+import com.twelvemonkeys.imageio.plugins.webp.WebPImageReaderSpi
 import io.github.samarium150.mirai.plugin.loafers_calendar.command.Clean
 import io.github.samarium150.mirai.plugin.loafers_calendar.command.GetLoafersCalendar
 import io.github.samarium150.mirai.plugin.loafers_calendar.command.Subscribe
@@ -34,18 +35,21 @@ import net.mamoe.mirai.console.command.CommandManager.INSTANCE.unregister
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
 import java.util.*
+import javax.imageio.spi.IIORegistry
 
 object MiraiConsoleLoafersCalendar : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-loafers-calendar",
         name = "Loafers' Calender",
-        version = "1.8.1",
+        version = "1.8.2",
     ) {
         author("Samarium")
     }
 ) {
 
     internal lateinit var client: HttpClient
+    private val spi by lazy { WebPImageReaderSpi() }
+    private val registry by lazy { IIORegistry.getDefaultInstance() }
 
     private fun setupScheduler(cronExpression: String, timezone: String) {
         CronUtil.schedule(cronExpression, Notification)
@@ -61,6 +65,8 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
 
         PluginData.reload()
 
+        registry.registerServiceProvider(spi)
+
         client = HttpClient(OkHttp) {
             install(HttpTimeout) {
                 TimeoutConfig().apply {
@@ -69,6 +75,7 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
                     socketTimeoutMillis = third
                 }
             }
+            expectSuccess = true
         }
 
         GetLoafersCalendar.register()
@@ -78,8 +85,6 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
 
         setupScheduler(PluginConfig.cron, PluginConfig.timezone)
         CronUtil.start()
-
-        logger.info("Plugin loaded")
     }
 
     override fun onDisable() {
@@ -92,6 +97,6 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
 
         client.close()
 
-        logger.info("Plugin unloaded")
+        registry.deregisterServiceProvider(spi)
     }
 }

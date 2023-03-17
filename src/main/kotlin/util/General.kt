@@ -30,10 +30,12 @@ import kotlinx.coroutines.runInterruptible
 import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Contact.Companion.sendImage
 import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
+import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import javax.imageio.ImageIO
 
 internal val logger by lazy {
     MiraiConsoleLoafersCalendar.logger
@@ -67,15 +69,25 @@ internal fun isSunday(date: String): Boolean {
     }
 }
 
-@Throws(ParseException::class, ServerResponseException::class, NotYetUpdatedException::class)
+internal suspend fun convertWebPToPNG(webpData: ByteArray): ByteArray {
+    return runInterruptible {
+        val output = ByteArrayOutputStream()
+        ImageIO.write(ImageIO.read(webpData.inputStream()), "png", output)
+        return@runInterruptible output.toByteArray()
+    }
+}
+
+@Throws(ParseException::class, ServerResponseException::class, NotUpdatedYetException::class)
 internal suspend fun downloadLoafersCalender(date: String? = null): InputStream {
     val target = sanitizeDate(date)
-    val file = cacheFolder.resolve("${target}.png")
+    val file = cacheFolder.resolve("$target.png")
     if (file.exists()) return file.inputStream()
-    val response: HttpResponse = httpClient.get("https://api.j4u.ink/proxy/redirect/moyu/calendar/${target}.png")
+    val response: HttpResponse = httpClient.get("https://api.j4u.ink/proxy/redirect/moyu/calendar/$target.png")
+    var body: ByteArray = response.body()
     if (!isSunday(target) && response.etag() == "\"6251bbbb-d2781\"")
-        throw NotYetUpdatedException("API is not updated yet")
-    val body: ByteArray = response.body()
+        throw NotUpdatedYetException("API is not updated yet")
+    if (response.headers["Content-Type"] == "image/webp")
+        body = convertWebPToPNG(body)
     if (PluginConfig.save)
         file.writeBytes(body)
     return body.inputStream()

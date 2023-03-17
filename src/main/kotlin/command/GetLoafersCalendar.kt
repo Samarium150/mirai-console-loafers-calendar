@@ -19,7 +19,7 @@ package io.github.samarium150.mirai.plugin.loafers_calendar.command
 import io.github.samarium150.mirai.plugin.loafers_calendar.MiraiConsoleLoafersCalendar
 import io.github.samarium150.mirai.plugin.loafers_calendar.config.CommandConfig
 import io.github.samarium150.mirai.plugin.loafers_calendar.config.PluginConfig
-import io.github.samarium150.mirai.plugin.loafers_calendar.util.NotYetUpdatedException
+import io.github.samarium150.mirai.plugin.loafers_calendar.util.NotUpdatedYetException
 import io.github.samarium150.mirai.plugin.loafers_calendar.util.downloadLoafersCalender
 import io.github.samarium150.mirai.plugin.loafers_calendar.util.logger
 import io.ktor.client.plugins.*
@@ -52,7 +52,7 @@ object GetLoafersCalendar : SimpleCommand(
             when (it) {
                 is ParseException -> sendMessage("日期格式错误，请使用 yyyyMMdd 格式")
                 is ServerResponseException -> sendMessage("获取日历图片失败")
-                is NotYetUpdatedException -> sendMessage("日历图片还未更新")
+                is NotUpdatedYetException -> sendMessage("日历图片还未更新")
                 else -> logger.error(it)
             }
             return@handle
