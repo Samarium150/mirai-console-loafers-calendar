@@ -1,3 +1,11 @@
+<a name="1.8.2"></a>
+# 1.8.2 (2023/03/16)
+
+
+## Bug Fixes
+
+* handle api changes ([bcbf944d](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/bcbf944d))
+
 <a name="1.8.1"></a>
 # 1.8.1 (2022/09/29)
 
