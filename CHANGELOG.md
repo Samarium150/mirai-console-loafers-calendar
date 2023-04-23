@@ -1,3 +1,10 @@
+<a name="1.8.3"></a>
+# 1.8.3 (2023/04/23)
+
+## Features
+
+* remove checking for Sunday ([b0040b06](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/b0040b06))
+
 <a name="1.8.2"></a>
 # 1.8.2 (2023/03/16)
 
