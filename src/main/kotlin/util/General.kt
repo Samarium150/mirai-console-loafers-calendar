@@ -1,5 +1,5 @@
 /*
- * Copyright (c) 2022 Samarium
+ * Copyright (c) 2023 Samarium
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -62,13 +62,6 @@ internal fun sanitizeDate(date: String?): String {
     return date
 }
 
-internal fun isSunday(date: String): Boolean {
-    Calendar.getInstance().apply {
-        time = SimpleDateFormat("yyyyMMdd").parse(date)
-        return get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
-    }
-}
-
 internal suspend fun convertWebPToPNG(webpData: ByteArray): ByteArray {
     return runInterruptible {
         val output = ByteArrayOutputStream()
@@ -84,7 +77,7 @@ internal suspend fun downloadLoafersCalender(date: String? = null): InputStream 
     if (file.exists()) return file.inputStream()
     val response: HttpResponse = httpClient.get("https://api.j4u.ink/proxy/redirect/moyu/calendar/$target.png")
     var body: ByteArray = response.body()
-    if (!isSunday(target) && response.etag() == "\"6251bbbb-d2781\"")
+    if (response.etag() == "\"6251bbbb-d2781\"")
         throw NotUpdatedYetException("API is not updated yet")
     if (response.headers["Content-Type"] == "image/webp")
         body = convertWebPToPNG(body)
@@ -120,7 +113,6 @@ internal fun cleanCalendarCache(date: String?) = runCatching {
         val file = cacheFolder.resolve("${sanitizeDate(date)}.png")
         if (file.isFile)
             file.delete()
-        else
-            return@runCatching
+        return@runCatching
     }
 }
