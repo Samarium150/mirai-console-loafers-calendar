@@ -1,3 +1,11 @@
+<a name="1.8.4"></a>
+# 1.8.4 (2024/03/14)
+
+
+## Bug Fixes
+
+* try backup API before throwing ([8e848238](https://github.com/Samarium150/mirai-console-loafers-calendar/commits/8e848238), closes [#5](https://github.com/Samarium150/mirai-console-loafers-calendar/issues/issues/5))
+
 <a name="1.8.3"></a>
 # 1.8.3 (2023/04/23)
 
