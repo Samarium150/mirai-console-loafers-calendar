@@ -41,7 +41,7 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
     JvmPluginDescription(
         id = "io.github.samarium150.mirai.plugin.mirai-console-loafers-calendar",
         name = "Loafers' Calender",
-        version = "1.8.2",
+        version = "1.8.4",
     ) {
         author("Samarium")
     }
@@ -52,9 +52,9 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
     private val registry by lazy { IIORegistry.getDefaultInstance() }
 
     private fun setupScheduler(cronExpression: String, timezone: String) {
-        CronUtil.schedule(cronExpression, Notification)
         CronUtil.setMatchSecond(true)
         CronUtil.getScheduler().timeZone = TimeZone.getTimeZone(timezone)
+        CronUtil.schedule(cronExpression, Notification)
     }
 
     override fun onEnable() {
@@ -94,6 +94,7 @@ object MiraiConsoleLoafersCalendar : KotlinPlugin(
         GetLoafersCalendar.unregister()
         Subscribe.unregister()
         Unsubscribe.unregister()
+        Clean.unregister()
 
         client.close()
 

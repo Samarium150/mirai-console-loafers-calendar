@@ -24,6 +24,7 @@ import io.ktor.client.plugins.*
 import io.ktor.client.request.*
 import io.ktor.client.statement.*
 import io.ktor.http.*
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.runInterruptible
@@ -31,6 +32,7 @@ import net.mamoe.mirai.Bot
 import net.mamoe.mirai.contact.Contact.Companion.sendImage
 import net.mamoe.mirai.utils.ExternalResource.Companion.toExternalResource
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.io.InputStream
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -51,36 +53,67 @@ internal val httpClient by lazy {
     MiraiConsoleLoafersCalendar.client
 }
 
-internal fun getUTC8Date(): Date {
-    return Calendar.getInstance(TimeZone.getTimeZone("UTC+8")).time
+internal val CTT = TimeZone.getTimeZone("CTT")
+
+internal val calendar get() = Calendar.getInstance(CTT)
+
+internal val SDF = SimpleDateFormat("yyyyMMdd").apply { timeZone = CTT }
+
+internal fun getUTC8Date(): String {
+    return SDF.format(calendar.time)
+}
+
+internal fun isSunday(date: Date): Boolean {
+    return calendar.apply { time = date }.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY
+}
+
+internal fun Date.isSameDay(other: Date): Boolean {
+    return calendar.apply {
+        time = this@isSameDay
+    }.get(Calendar.DAY_OF_YEAR) == calendar.apply {
+        time = other
+    }.get(Calendar.DAY_OF_YEAR)
 }
 
 @Throws(ParseException::class)
 internal fun sanitizeDate(date: String?): String {
-    if (date == null) return SimpleDateFormat("yyyyMMdd").format(getUTC8Date())
-    SimpleDateFormat("yyyyMMdd").parse(date)
+    if (date == null) return getUTC8Date()
+    SDF.parse(date)
     return date
 }
 
-internal suspend fun convertWebPToPNG(webpData: ByteArray): ByteArray {
-    return runInterruptible {
+@Throws(CancellationException::class, IOException::class)
+internal suspend fun convertToPNG(bytes: ByteArray): ByteArray {
+    return runInterruptible(Dispatchers.IO) {
         val output = ByteArrayOutputStream()
-        ImageIO.write(ImageIO.read(webpData.inputStream()), "png", output)
+        ImageIO.write(ImageIO.read(bytes.inputStream()), "png", output)
         return@runInterruptible output.toByteArray()
     }
 }
 
-@Throws(ParseException::class, ServerResponseException::class, NotUpdatedYetException::class)
+@Throws(
+    CancellationException::class,
+    IOException::class,
+    NotUpdatedYetException::class,
+    ParseException::class,
+    ServerResponseException::class
+)
 internal suspend fun downloadLoafersCalender(date: String? = null): InputStream {
     val target = sanitizeDate(date)
+    val targetDate = SDF.parse(target)
     val file = cacheFolder.resolve("$target.png")
     if (file.exists()) return file.inputStream()
-    val response: HttpResponse = httpClient.get("https://api.j4u.ink/proxy/redirect/moyu/calendar/$target.png")
+    var response: HttpResponse = httpClient.get("https://api.j4u.ink/proxy/redirect/moyu/calendar/$target.png")
     var body: ByteArray = response.body()
-    if (response.etag() == "\"6251bbbb-d2781\"")
-        throw NotUpdatedYetException("API is not updated yet")
-    if (response.headers["Content-Type"] == "image/webp")
-        body = convertWebPToPNG(body)
+    if (response.etag() == "dcfa2a3538f911d47550b49cbfbfb23f" && !isSunday(targetDate)) {
+        if (!targetDate.isSameDay(calendar.time))
+            throw NotUpdatedYetException("API is not updated yet")
+        response = httpClient.get("https://api.vvhan.com/api/moyu")
+        if (response.lastModified()?.isSameDay(targetDate) == false)
+            throw NotUpdatedYetException("API is not updated yet")
+        body = response.body()
+    }
+    body = convertToPNG(body)
     if (PluginConfig.save)
         file.writeBytes(body)
     return body.inputStream()
@@ -103,6 +136,7 @@ internal fun Bot.sendUpdate() = MiraiConsoleLoafersCalendar.launch {
     }
 }
 
+@Throws(ParseException::class)
 internal fun cleanCalendarCache(date: String?) = runCatching {
     if (date == null) {
         cacheFolder.listFiles()?.forEach {
