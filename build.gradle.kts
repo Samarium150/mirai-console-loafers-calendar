@@ -5,7 +5,7 @@ plugins {
     kotlin("jvm") version kotlinVersion
     kotlin("plugin.serialization") version kotlinVersion
 
-    id("net.mamoe.mirai-console") version "2.14.0"
+    id("net.mamoe.mirai-console") version "2.16.0"
     id("com.geoffgranum.gradle-conventional-changelog") version "+"
 }
 
@@ -17,9 +17,9 @@ repositories {
 }
 
 dependencies {
-    implementation("cn.hutool:hutool-cron:5.8.18")
-    implementation("com.twelvemonkeys.imageio:imageio-webp:3.9.4")
-    implementation(platform("io.ktor:ktor-bom:2.3.0"))
+    implementation("cn.hutool:hutool-cron:5.8.26")
+    implementation("com.twelvemonkeys.imageio:imageio-webp:3.10.1")
+    implementation(platform("io.ktor:ktor-bom:2.3.9"))
     implementation("io.ktor:ktor-client-okhttp-jvm")
 }
 
